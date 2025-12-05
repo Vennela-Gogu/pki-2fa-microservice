@@ -1,0 +1,34 @@
+
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: pki-app
+
+    ports:
+      - "8080:8080"
+
+    volumes:
+      # Mount the seed file (IMPORTANT: absolute or relative path)
+      - ./data/seed.txt:/app/data/seed.txt:ro
+
+      # Persistent volumes
+      - ./data:/data
+      - cron-output:/cron
+
+      # Key file bindings (read-only)
+      - ./keys/student_private.pem:/app/student_private.pem:ro
+      - ./keys/student_public.pem:/app/student_public.pem:ro
+      - ./keys/instructor_public.pem:/app/instructor_public.pem:ro
+
+    environment:
+      - TZ=UTC
+
+    restart: unless-stopped
+
+volumes:
+  seed-data:
+  cron-output:
